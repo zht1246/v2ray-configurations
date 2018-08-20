@@ -1,21 +1,25 @@
 {
   "inbound": {
-    "port": 1080, 
-    "streamSettings": null, 
+    "port": 1080,
+    "streamSettings": null,
     "settings": {
-     "ip": "127.0.0.1", 
-     "udp": true, 
-     "clients": null, 
-     "auth": "noauth"
-    }, 
-    "protocol": "socks", 
+      "ip": "127.0.0.1",
+      "udp": true,
+      "clients": null,
+      "auth": "noauth"
+    },
+    "protocol": "socks",
     "listen": "0.0.0.0"
-   }, 
-   "inboundDetour": [
-      {
-        "port": "1099",
-        "listen": "0.0.0.0",
-        "allocate": {
+  },
+  "inboundDetour": [
+    {
+      "domainOverride": [
+        "tls",
+        "http"
+      ],
+      "port": "1099",
+      "listen": "0.0.0.0",
+      "allocate": {
         "strategy": "always",
         "refresh": 5,
         "concurrency": 3
@@ -26,134 +30,133 @@
         "timeout": 30,
         "followRedirect": true
       }
-      },
-    {//开放http端口
-    "port": 10800,  
-    "streamSettings": null, 
-    "settings": {
-     "ip": "127.0.0.1", 
-     "udp": true, 
-     "clients": null, 
-     "auth": "noauth"
-    }, 
-    "protocol": "http", 
-    "listen": "0.0.0.0"
-   }
-  
-    ],
-   "outbound": {
-    "streamSettings": {
-     "network": "tcp", 
-     "kcpSettings": null, 
-     "wsSettings": null, 
-     "tcpSettings": null, 
-     "tlsSettings": {}, 
-     "security": ""
-    }, 
-    "tag": "agentout", 
-    "protocol": "vmess", 
-    "mux": {
-     "enabled": true
-    }, 
-    "settings": {
-     "vnext": [
-      {
-       "users": [
-        {
-         "alterId": 100, 
-         "security": "auto", 
-         "id": "a4f907f7-fad2-45f3-8e01-60f3a26f84f7"
-        }
-       ], 
-       "port": 12345, 
-       "address": "207.246.99.252"
-      }
-     ]
-    }
-   }, 
-   "log": {
-    "access": "", 
-    "loglevel": "info", 
-    "error": ""
-   }, 
-   "outboundDetour": [ //额外的传出连接配置-可以判断哪些网站直连，哪些广告连接过滤，哪些走代理
-      {
-        "tag": "direct", //用direct作为直连服务的代号，供后面使用
-        "protocol": "freedom",
-        "settings": {
-          "response": null
-        }
-      },
-      {
-        "tag": "adblock", //如果要使用路由，这个 tag 是一定要有的，这个是设置广告过滤功能，这个目前只能过滤指定网站，不弄了
-        "protocol": "blackhole",
-        "settings": {
-          "response": {
-            "type": "http"
-          }
-        }
-      }
-    ],
-    "routing": { //路由功能，实现国内网站直连，国外网站代理
+    },
+    { //开放http端口
+      "port": 10800,
+      "streamSettings": null,
       "settings": {
-        "strategy": "rules", //固定格式
-        "domainStrategy": "IPIfNonMatch", //固定格式
-        "rules": [
-          { //这些ip直连
-            "domain": null,
-            "type": "field",
-            "port": null,
-            "outboundTag": "direct",
-            "ip": [
-              "0.0.0.0/8",
-              "10.0.0.0/8",
-              "100.64.0.0/10",
-              "127.0.0.0/8",
-              "169.254.0.0/16",
-              "172.16.0.0/12",
-              "192.0.0.0/24",
-              "192.0.2.0/24",
-              "192.168.0.0/16",
-              "198.18.0.0/15",
-              "198.51.100.0/24",
-              "203.0.113.0/24",
-              "::1/128",
-              "fc00::/7",
-              "fe80::/10"
-            ]
-          },
-          {//这些端口直连
-            "type": "field",
-            "port": "54-79",
-            "outboundTag": "direct"
-          },
-          {
-            "type": "field",
-            "port": "81-442",
-            "outboundTag": "direct"
-          },
-          {
-            "type": "field",
-            "port": "444-65535",
-            "outboundTag": "direct"
-          },
-          { //中国ip直连
-            "type": "chinaip",
-            "outboundTag": "direct"
-          },
-          { //中国网站直连
-            "type": "chinasites",
-            "outboundTag": "direct"
-          }
-        ]
+        "ip": "127.0.0.1",
+        "udp": true,
+        "clients": null,
+        "auth": "noauth"
+      },
+      "protocol": "http",
+      "listen": "0.0.0.0"
+    }
+  ],
+  "outbound": {
+    "streamSettings": {
+      "network": "tcp",
+      "kcpSettings": null,
+      "wsSettings": null,
+      "tcpSettings": null,
+      "tlsSettings": {},
+      "security": ""
+    },
+    "tag": "agentout",
+    "protocol": "vmess",
+    "mux": {
+      "enabled": true
+    },
+    "settings": {
+      "vnext": [
+        {
+          "users": [
+            {
+              "alterId": 100,
+              "security": "auto",
+              "id": "a4f907f7-fad2-45f3-8e01-60f3a26f84f7"
+            }
+          ],
+          "port": 12345,
+          "address": "207.246.99.252"
+        }
+      ]
+    }
+  },
+  "log": {
+    "access": "",
+    "loglevel": "info",
+    "error": ""
+  },
+  "outboundDetour": [ //额外的传出连接配置-可以判断哪些网站直连，哪些广告连接过滤，哪些走代理
+    {
+      "tag": "direct", //用direct作为直连服务的代号，供后面使用
+      "protocol": "freedom",
+      "settings": {
+        "response": null
       }
     },
-   "dns": {
+    {
+      "tag": "adblock", //如果要使用路由，这个 tag 是一定要有的，这个是设置广告过滤功能，这个目前只能过滤指定网站，不弄了
+      "protocol": "blackhole",
+      "settings": {
+        "response": {
+          "type": "http"
+        }
+      }
+    }
+  ],
+  "routing": { //路由功能，实现国内网站直连，国外网站代理
+    "settings": {
+      "strategy": "rules", //固定格式
+      "domainStrategy": "IPIfNonMatch", //固定格式
+      "rules": [
+        { //这些ip直连
+          "domain": null,
+          "type": "field",
+          "port": null,
+          "outboundTag": "direct",
+          "ip": [
+            "0.0.0.0/8",
+            "10.0.0.0/8",
+            "100.64.0.0/10",
+            "127.0.0.0/8",
+            "169.254.0.0/16",
+            "172.16.0.0/12",
+            "192.0.0.0/24",
+            "192.0.2.0/24",
+            "192.168.0.0/16",
+            "198.18.0.0/15",
+            "198.51.100.0/24",
+            "203.0.113.0/24",
+            "::1/128",
+            "fc00::/7",
+            "fe80::/10"
+          ]
+        },
+        { //这些端口直连
+          "type": "field",
+          "port": "54-79",
+          "outboundTag": "direct"
+        },
+        {
+          "type": "field",
+          "port": "81-442",
+          "outboundTag": "direct"
+        },
+        {
+          "type": "field",
+          "port": "444-65535",
+          "outboundTag": "direct"
+        },
+        { //中国ip直连
+          "type": "chinaip",
+          "outboundTag": "direct"
+        },
+        { //中国网站直连
+          "type": "chinasites",
+          "outboundTag": "direct"
+        }
+      ]
+    }
+  },
+  "dns": {
     "servers": [
-     "8.8.8.8",
-     "223.5.5.5",
-     "localhost"
+      "223.5.5.5",
+      "8.8.8.8",
+      "223.6.6.6",
+      "localhost"
     ]
-   }
   }
-  
+}
