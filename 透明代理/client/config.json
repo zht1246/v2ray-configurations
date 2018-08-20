@@ -11,7 +11,8 @@
 		"protocol": "socks",
 		"listen": "0.0.0.0"
 	},
-	"inboundDetour": [{
+	"inboundDetour": [
+		{
 			"port": "1099",
 			"listen": "0.0.0.0",
 			"allocate": {
@@ -19,10 +20,14 @@
 				"refresh": 5,
 				"concurrency": 3
 			},
-                        "domainOverride": ["tls","http"],
+			//用了这个socks协议打包后的文件就会直接在这里解析出域名，然后把域名发往vps的dns出ip，这样防止国内dns的污染
+			"domainOverride": [
+				"tls",
+				"http"
+			],
 			"protocol": "dokodemo-door",
 			"settings": {
-                                "network": "tcp,udp",
+				"network": "tcp,udp",
 				"timeout": 30,
 				"followRedirect": true
 			}
@@ -55,15 +60,19 @@
 			"enabled": true
 		},
 		"settings": {
-			"vnext": [{
-				"users": [{
-					"alterId": 100,
-					"security": "auto",
-					"id": "a4f907f7-fad2-45f3-8e01-60f3a26f84f7"
-				}],
-				"port": 12345,
-				"address": "207.246.99.252"
-			}]
+			"vnext": [
+				{
+					"users": [
+						{
+							"alterId": 100,
+							"security": "auto",
+							"id": "a4f907f7-fad2-45f3-8e01-60f3a26f84f7"
+						}
+					],
+					"port": 12345,
+					"address": "207.246.99.252"
+				}
+			]
 		}
 	},
 	"log": {
@@ -93,7 +102,8 @@
 		"settings": {
 			"strategy": "rules", //固定格式
 			"domainStrategy": "IPIfNonMatch", //固定格式
-			"rules": [{ //这些ip直连
+			"rules": [
+				{ //这些ip直连
 					"domain": null,
 					"type": "field",
 					"port": null,
